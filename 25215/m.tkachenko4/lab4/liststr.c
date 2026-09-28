@@ -8,7 +8,7 @@ struct node {
 int main() {
     struct node *head = NULL;
     struct node *tail = NULL;
-    char buf[1024];
+    char buf[BUFSIZ];
     while (fgets(buf, sizeof(buf), stdin) != NULL) {
         if (buf[0] == '.')
             break;
