@@ -22,10 +22,21 @@ int main(void)
         for (size_t i = 0; i < n; i++) {
             buffer[i] = (char)toupper((unsigned char)buffer[i]);
         }
-        if (fwrite(buffer, 1, n, stdout) != n) {
-            perror("fwrite");
-            pclose(pipe_stream);
-            return 1;
+
+        size_t written = 0;
+        while (written < n) {
+            size_t k = fwrite(buffer + written, 1, n - written, stdout);
+            written += k;
+            if (ferror(stdout)) {
+                perror("fwrite");
+                pclose(pipe_stream);
+                return 1;
+            }
+            if (k == 0) {
+                fprintf(stderr, "fwrite: no progress\n");
+                pclose(pipe_stream);
+                return 1;
+            }
         }
     }
 
